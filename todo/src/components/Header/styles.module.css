@@ -1,0 +1,22 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 50px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.taskFormModal, .authModal {
+  padding: 30px;
+  padding-bottom: 50px;
+}
+
+.addTaskBtn {
+  margin-right: 10px;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+}

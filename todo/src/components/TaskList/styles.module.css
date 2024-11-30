@@ -1,0 +1,16 @@
+.tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pagination {
+  margin-top: 20px;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}

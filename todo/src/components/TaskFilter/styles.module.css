@@ -1,0 +1,18 @@
+.filter {
+  display: flex;
+  justify-content: space-between;
+  margin: 30px 0;
+}
+
+.form {
+  display: flex;
+  align-items: center;
+}
+
+.emailInput {
+  margin: 0 10px;
+}
+
+.mainSort {
+  margin-right: 10px;
+}

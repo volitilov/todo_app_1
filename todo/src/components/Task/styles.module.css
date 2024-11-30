@@ -1,0 +1,16 @@
+.task {
+  padding: 20px;
+}
+
+.taskHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #fff;
+}
+
+.taskText {
+  padding: 12px 0;
+}
