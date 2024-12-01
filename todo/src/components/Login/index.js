@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import adminStore from '../../stores/adminStore';
 import taskStore from '../../stores/taskStore';
 import {Button, TextInput, useToaster} from '@gravity-ui/uikit';
+import axios from 'axios';
 
 const Login = observer(() => {
   const navigate = useNavigate();
@@ -12,32 +13,34 @@ const Login = observer(() => {
   const [password, setPassword] = useState('');
   const {add} = useToaster();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const adminUsername = process.env.REACT_APP_ADMIN_USERNAME;
-    const adminPassword = process.env.REACT_APP_ADMIN_PASSWORD;
+    try {
+      const response = await axios.post('/login', { username, password });
+      const accessToken = response.data.access_token;
+      adminStore.login(accessToken);
 
-    if (username === adminUsername && password === adminPassword) {
-        adminStore.login();
-        add({
-          title: 'Успешно',
-          content: 'Вы успешно авторизовались',
-          theme: 'success',
-        });
-        const qSortBy = taskStore.currentSortBy;
-        const qStatus = taskStore.currentFilterStatus;
-        const qSortOrder = taskStore.currentOrderBy;
+      add({
+        title: 'Успешно',
+        content: 'Вы успешно авторизовались',
+        theme: 'success',
+      });
 
-        navigate(`/?page=1&sort_by=${qSortBy}&status=${qStatus}&sort_order=${qSortOrder}`);
-    } else {
-        add({
+      const qSortBy = taskStore.currentSortBy;
+      const qStatus = taskStore.currentFilterStatus;
+      const qSortOrder = taskStore.currentOrderBy;
+      navigate(`/?page=1&sort_by=${qSortBy}&status=${qStatus}&sort_order=${qSortOrder}`);
+    } catch (error) {
+      add({
           title: 'Ошибка',
           content: 'Неверный логин или пароль',
           theme: 'danger',
         });
     }
 
+    setPassword('');
+    setUsername('');
   };
 
   return (

@@ -2,19 +2,24 @@ import { makeAutoObservable } from 'mobx';
 
 
 class AdminStore {
-    isAdmin = false;
+  isAdmin = false;
+  accessToken = localStorage.getItem('accessToken') || null;
 
-    constructor() {
-        makeAutoObservable(this);
-    }
+  constructor() {
+    makeAutoObservable(this);
+  }
 
-    login = () => {
-        this.isAdmin = true;
-    };
+  login = (accessToken) => {
+    this.isAdmin = true;
+    this.accessToken = accessToken;
+    localStorage.setItem('accessToken', accessToken);
+  };
 
-    logout = () => {
-        this.isAdmin = false;
-    };
+  logout = () => {
+    this.isAdmin = false;
+    this.accessToken = null;
+    localStorage.removeItem('accessToken');
+  };
 }
 
 const adminStore = new AdminStore();
