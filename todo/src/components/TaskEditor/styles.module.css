@@ -18,3 +18,9 @@
   display: flex;
   justify-content: space-between;
 }
+
+.taskHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

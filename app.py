@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
-from flask import Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
+from sqlalchemy import desc
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
@@ -15,21 +15,39 @@ from models import Task
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
     page = request.args.get('page', 1, type=int)
-    username_filter = request.args.get('username', None)
-    email_filter = request.args.get('email', None)
     status_filter = request.args.get('status', None)
-    sort_by = request.args.get('sort_by', 'id')
+    sort_by = request.args.get('sort_by', 'created')
+    sort_order = request.args.get('sort_order', 'desc')
 
     query = Task.query
 
-    if username_filter:
-        query = query.filter(Task.username.ilike(f'%{username_filter}%'))
-    if email_filter:
-        query = query.filter(Task.email.ilike(f'%{email_filter}%'))
     if status_filter == 'true' or status_filter == 'false':
         query = query.filter(Task.status == (status_filter.lower() == 'true'))
 
-    tasks_pagination = query.order_by(sort_by).paginate(page=page, per_page=3)
+    if sort_by == 'created':
+        if sort_order == 'desc':
+            query = query.order_by(desc(Task.created))
+        else:
+            query = query.order_by(Task.created)
+    elif sort_by == 'email':
+        if sort_order == 'desc':
+            query = query.order_by(desc(Task.email))
+        else:
+            query = query.order_by(Task.email)
+    elif sort_by == 'username':
+        if sort_order == 'desc':
+            query = query.order_by(desc(Task.username))
+        else:
+            query = query.order_by(Task.username)
+    elif sort_by == 'status':
+        if sort_order == 'desc':
+            query = query.order_by(desc(Task.status))
+        else:
+            query = query.order_by(Task.status)
+    else:
+        query = query.order_by(Task.id)
+
+    tasks_pagination = query.paginate(page=page, per_page=3)
     tasks = tasks_pagination.items
     total_tasks = tasks_pagination.total
 
@@ -40,7 +58,8 @@ def get_tasks():
             'email': task.email,
             'text': task.text,
             'status': task.status,
-            'created': task.created.isoformat()
+            'created': task.created.isoformat(),
+            'text_is_edited': task.text_is_edited,
         } for task in tasks],
         'total_tasks': total_tasks
     })
@@ -63,6 +82,7 @@ def update_task(task_id):
     data = request.json
     task.text = data.get('text', task.text)
     task.status = data.get('status', task.status)
+    task.text_is_edited = data.get('text_is_edited', task.text_is_edited)
     db.session.commit()
     return jsonify({'id': task.id})
 

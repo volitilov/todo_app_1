@@ -2,10 +2,10 @@ import classes from './styles.module.css';
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import taskStore from '../../stores/taskStore';
-import {Card, User, Checkbox, TextArea, Button, Icon} from '@gravity-ui/uikit';
+import {Card, User, Checkbox, TextArea, Button, Icon, Label} from '@gravity-ui/uikit';
 import {Pencil} from '@gravity-ui/icons';
 
-const TaskEditor = observer(({ task, page=1 }) => {
+const TaskEditor = observer(({ task }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedText, setEditedText] = useState(task.text);
 
@@ -14,12 +14,12 @@ const TaskEditor = observer(({ task, page=1 }) => {
     };
 
     const handleSave = () => {
-        taskStore.updateTask(task.id, { text: editedText }, page);
+        taskStore.updateTask(task.id, { text: editedText, text_is_edited: editedText !== task.text });
         setIsEditing(false);
     };
 
     const handleCheckboxChange = () => {
-        taskStore.updateTask(task.id, { status: !task.status }, page);
+        taskStore.updateTask(task.id, { status: !task.status });
     };
 
     return (
@@ -27,10 +27,13 @@ const TaskEditor = observer(({ task, page=1 }) => {
         theme={task.status ? 'success' : 'normal'}
         type="container">
             <div className={classes.taskHeader}>
-            <User avatar={{text: task.username, theme: 'brand'}} name={task.username} description={task.email} size="s" />
-            <Checkbox size="l" 
-                checked={task.status}
-                onChange={handleCheckboxChange} />
+              <User avatar={{text: task.username, theme: 'brand'}} name={task.username} description={task.email} size="s" />
+              <div className={classes.taskHeaderRight}>
+                {task.text_is_edited && <Label theme="warning" size="xs">отредактировано администратором</Label>}
+                <Checkbox size="l" 
+                    checked={task.status}
+                    onChange={handleCheckboxChange}>{task.status ? 'Выполнено' : 'Не выполнено'}</Checkbox>
+              </div>
             </div>
             <div className={classes.taskText}>
               {isEditing ? (

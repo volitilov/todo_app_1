@@ -14,3 +14,9 @@
 .taskText {
   padding: 12px 0;
 }
+
+.taskHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

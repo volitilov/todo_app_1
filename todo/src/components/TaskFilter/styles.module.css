@@ -16,3 +16,9 @@
 .mainSort {
   margin-right: 10px;
 }
+
+.sortBtns {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

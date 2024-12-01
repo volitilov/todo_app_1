@@ -14,27 +14,23 @@ const TaskList = observer(() => {
   const [searchParams] = useSearchParams();
   const [pageState, setPageState] = useState({
     page: parseInt(searchParams.get('page')) || 1,
-    pageSize: 3,
-    usernameFilter: '',
-    emailFilter: '',
-    statusFilter: 'all',
+    pageSize: 3
   });
 
   useEffect(() => {
     const qPage = parseInt(searchParams.get('page')) || 1;
-    const qUsername = searchParams.get('username') || '';
-    const qEmail = searchParams.get('email') || '';
     const qStatus = searchParams.get('status') || 'all';
-    const qSortBy = searchParams.get('sort_by') || 'id';
+    const qSortBy = searchParams.get('sort_by') || 'created';
+    const qSortOrder = searchParams.get('sort_order') || 'desc';
     taskStore.currentSortBy = qSortBy;
     taskStore.currentPage = qPage;
-    taskStore.currentFilterUsername = qUsername;
-    taskStore.currentFilterEmail = qEmail;
     taskStore.currentFilterStatus = qStatus;
+    taskStore.currentOrderBy = qSortOrder;
     taskStore.fetchTasks();
+
     if (taskStore.error) return <p>Ошибка: {taskStore.error}</p>;
 
-    setPageState({ page: qPage, usernameFilter: qUsername, emailFilter: qEmail, statusFilter: qStatus, pageSize: 3 });
+    setPageState({ page: qPage, pageSize: 3 });
   }, [searchParams]);
 
   if (taskStore.loading) return <div className={classes.loader}><Loader size="s" /></div>;
@@ -42,7 +38,7 @@ const TaskList = observer(() => {
 
   const handleUpdate = (page, pageSize) => {
     setPageState((prevState) => ({...prevState, page, pageSize}));
-    navigate(`/?page=${page}&sort_by=${taskStore.currentSortBy}&username=${taskStore.currentFilterUsername}&email=${taskStore.currentFilterEmail}&status=${taskStore.currentFilterStatus}`);
+    navigate(`/?page=${page}&sort_by=${taskStore.currentSortBy}&status=${taskStore.currentFilterStatus}&sort_order=${taskStore.currentOrderBy}`);
   }
 
   return (

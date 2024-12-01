@@ -8,3 +8,4 @@ class Task(db.Model):
     text = db.Column(db.Text, nullable=False)
     status = db.Column(db.Boolean, default=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    text_is_edited = db.Column(db.Boolean, default=False)
