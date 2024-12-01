@@ -5,6 +5,13 @@ import { observer } from 'mobx-react-lite';
 import {Select} from '@gravity-ui/uikit';
 import taskStore from '../../stores/taskStore';
 import SortButton from '../SortButton';
+import {
+  DEFAULT_TASK_STATUS,
+  TASK_SORT_BY_CREATED,
+  TASK_SORT_BY_EMAIL,
+  TASK_SORT_BY_STATUS,
+  TASK_SORT_BY_USERNAME
+} from '../../constants';
 
 
 const TaskFilter = observer(() => {
@@ -15,7 +22,7 @@ const TaskFilter = observer(() => {
   };
 
   const changeStatus = (e) => {
-    const value = e.length ? e[0] :  'all';
+    const value = e.length ? e[0] :  DEFAULT_TASK_STATUS;
     taskStore.currentFilterStatus = value;
     handleChange();
   };
@@ -23,10 +30,10 @@ const TaskFilter = observer(() => {
   return (
     <div className={classes.filter}>
       <div className={classes.sortBtns}>
-        <SortButton title="по email" value={'email'} handleChange={handleChange} />
-        <SortButton title="по имени" value={'username'} handleChange={handleChange} />
-        <SortButton title="по дате" value={'created'} handleChange={handleChange} />
-        <SortButton title="по статусу" value={'status'} handleChange={handleChange} />
+        <SortButton title="по email" value={TASK_SORT_BY_EMAIL} handleChange={handleChange} />
+        <SortButton title="по имени" value={TASK_SORT_BY_USERNAME} handleChange={handleChange} />
+        <SortButton title="по дате" value={TASK_SORT_BY_CREATED} handleChange={handleChange} />
+        <SortButton title="по статусу" value={TASK_SORT_BY_STATUS} handleChange={handleChange} />
       </div>
       <Select onUpdate={changeStatus} value={[taskStore.currentFilterStatus]}
         renderSelectedOption={(option) => {

@@ -5,11 +5,21 @@ import { useNavigate } from 'react-router-dom';
 
 import adminStore from '../../stores/adminStore';
 
-import {Button} from '@gravity-ui/uikit';
+import {Button, useToaster} from '@gravity-ui/uikit';
 
 
 const Header = observer(() => {
   const navigate = useNavigate();
+  const {add} = useToaster();
+
+  const logout = () => {
+    adminStore.logout();
+    add({
+      title: 'Внимание',
+      content: 'Вы вышли из системы',
+      theme: 'warning',
+    });
+  };
 
   return (
     <header className={classes.header}>
@@ -18,7 +28,7 @@ const Header = observer(() => {
         <Button view="action" onClick={() => navigate('/add_task')} 
           className={classes.addTaskBtn}>+ Добавить</Button>
         {adminStore.isAdmin ? (
-            <Button onClick={() => adminStore.logout()}>Выход</Button>
+            <Button onClick={logout}>Выход</Button>
         ) : (
           <Button onClick={() => navigate('/login')}>Войти</Button>
         )}

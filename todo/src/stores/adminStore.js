@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import api from '../api';
 
 
 class AdminStore {
@@ -7,6 +8,15 @@ class AdminStore {
 
   constructor() {
     makeAutoObservable(this);
+    this.initializeFromLocalStorage();
+  }
+
+  initializeFromLocalStorage() {
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      this.isAdmin = true;
+      this.accessToken = accessToken;
+    }
   }
 
   login = (accessToken) => {
@@ -15,10 +25,11 @@ class AdminStore {
     localStorage.setItem('accessToken', accessToken);
   };
 
-  logout = () => {
+  logout = async () => {
     this.isAdmin = false;
     this.accessToken = null;
     localStorage.removeItem('accessToken');
+    await api.post('/logout');
   };
 }
 

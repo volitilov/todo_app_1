@@ -10,6 +10,7 @@ import {
   MIN_TASK_TEXT_LENGTH, MAX_TASK_TEXT_LENGTH
 } from '../../constants';
 
+
 const TaskForm = observer(() => {
   const navigate = useNavigate();
   const {add} = useToaster();

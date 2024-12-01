@@ -1,9 +1,8 @@
 from logging.handlers import RotatingFileHandler
 import os, logging
 from flask import request, jsonify
+import jwt
 from sqlalchemy import desc
-from werkzeug.security import check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required
 from models import User, Task
 from app import create_app, db
 
@@ -36,11 +35,32 @@ def login():
         return jsonify(message='Invalid request data'), 400
 
     user = User.query.filter_by(username=username).first()
-    if user and check_password_hash(user.password, password):
-        access_token = create_access_token(identity=user.id)
-        return jsonify(access_token=access_token), 200
+    if user and user.check_password(password):
+        payload = {'user_id': user.id}
+        access_token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
+        user.add_token(access_token)
+        db.session.commit()
+        return jsonify(access_token=access_token)
     else:
         return jsonify(message='Invalid username or password'), 401
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    response = jsonify({"msg": "logout successful"})
+    auth_header = request.headers.get('Authorization')
+    if auth_header:
+        access_token = auth_header.split(" ")[1]
+        try:
+            payload = jwt.decode(access_token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            user_id = payload['user_id']
+            user = User.query.get(user_id)
+            if user:
+                user.clear_token()
+                db.session.commit()
+        except jwt.InvalidTokenError:
+            print("Invalid token")
+    return response
 
 
 @app.route('/tasks', methods=['GET'])
@@ -107,8 +127,29 @@ def create_task():
 
 
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
-@jwt_required()
 def update_task(task_id):
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({'error': 'Missing authorization header'}), 401
+
+    if not auth_header.startswith('Bearer '):
+        return jsonify({'error': 'Invalid authorization header'}), 401
+
+    token = auth_header.split(' ')[1]
+
+    try:
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+
+    except jwt.InvalidTokenError:
+        return jsonify({'error': 'Invalid token'}), 401
+
+    user = User.query.get(payload['user_id'])
+    if not user:
+        return jsonify({'error': 'User not found'}), 401
+
+    if user.access_token != token:
+        return jsonify({'error': 'Invalid token'}), 401
+
     task = Task.query.get(task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404

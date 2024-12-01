@@ -1,5 +1,10 @@
 import { makeAutoObservable } from 'mobx';
 import api from '../api';
+import {
+    DEFAULT_TASK_ORDER_BY,
+    DEFAULT_TASK_STATUS,
+    DEFAULT_TASK_SORT_BY
+} from '../constants';
 
 class TaskStore {
     tasks = [];
@@ -7,9 +12,9 @@ class TaskStore {
     totalTasks = 0;
     error = null;
     currentPage = 1;
-    currentFilterStatus = 'all'; // all, true, false
-    currentSortBy = 'created';
-    currentOrderBy = 'desc'; // desc, asc
+    currentFilterStatus = DEFAULT_TASK_STATUS; // all, true, false
+    currentSortBy = DEFAULT_TASK_SORT_BY;
+    currentOrderBy = DEFAULT_TASK_ORDER_BY; // desc, asc
 
     constructor() {
         makeAutoObservable(this);
@@ -42,6 +47,7 @@ class TaskStore {
     updateTask = async (task_id, task) => {
         try {
             await api.put(`/tasks/${task_id}`, task);
+
             this.fetchTasks();
         } catch (error) {
             console.error(error);

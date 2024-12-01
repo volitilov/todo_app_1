@@ -8,6 +8,12 @@ import Task from '../Task';
 import TaskEditor from '../TaskEditor';
 import {Pagination, Loader} from '@gravity-ui/uikit';
 import TaskFilter from '../TaskFilter';
+import {
+  DEFAULT_TASK_ORDER_BY,
+  DEFAULT_TASK_SORT_BY,
+  DEFAULT_TASK_STATUS
+} from '../../constants';
+
 
 const TaskList = observer(() => {
   const navigate = useNavigate();
@@ -19,9 +25,9 @@ const TaskList = observer(() => {
 
   useEffect(() => {
     const qPage = parseInt(searchParams.get('page')) || 1;
-    const qStatus = searchParams.get('status') || 'all';
-    const qSortBy = searchParams.get('sort_by') || 'created';
-    const qSortOrder = searchParams.get('sort_order') || 'desc';
+    const qStatus = searchParams.get('status') || DEFAULT_TASK_STATUS;
+    const qSortBy = searchParams.get('sort_by') || DEFAULT_TASK_SORT_BY;
+    const qSortOrder = searchParams.get('sort_order') || DEFAULT_TASK_ORDER_BY;
     taskStore.currentSortBy = qSortBy;
     taskStore.currentPage = qPage;
     taskStore.currentFilterStatus = qStatus;
