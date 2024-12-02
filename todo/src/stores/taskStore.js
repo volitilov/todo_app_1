@@ -26,7 +26,6 @@ class TaskStore {
             const response = await api.get(
                 `/tasks?page=${this.currentPage}&sort_by=${this.currentSortBy}&status=${this.currentFilterStatus}&sort_order=${this.currentOrderBy}`);
             this.tasks = response.data.tasks;
-            console.log(response.data);
             this.totalTasks = response.data.total_tasks;
         } catch (error) {
             this.error = error.message;
