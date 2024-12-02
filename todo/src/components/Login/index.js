@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import adminStore from '../../stores/adminStore';
 import taskStore from '../../stores/taskStore';
 import {Button, TextInput, useToaster} from '@gravity-ui/uikit';
-import axios from 'axios';
+import api from '../../api';
+
 
 const Login = observer(() => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const Login = observer(() => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('/login', { username, password });
+      const response = await api.post('/login', { username, password });
       const accessToken = response.data.access_token;
       adminStore.login(accessToken);
 

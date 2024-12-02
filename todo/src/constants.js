@@ -1,3 +1,5 @@
+export const API_URL = 'https://toodoo.kitgit.ru';
+
 export const MIN_LOGIN_LENGTH = 5;
 export const MAX_LOGIN_LENGTH = 20;
 

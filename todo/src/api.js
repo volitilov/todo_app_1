@@ -1,11 +1,17 @@
 import axios from 'axios';
 import adminStore from './stores/adminStore';
+import { API_URL } from './constants';
 
 const api = axios.create();
 
 
 api.interceptors.request.use((config) => {
   const accessToken = localStorage.getItem('accessToken');
+
+  if (!config.url.startsWith('http')) {
+    config.url = API_URL + config.url;
+  }
+
   if (accessToken) {
     config.headers['Authorization'] = `Bearer ${accessToken}`;
     config.headers['Content-Type'] = 'application/json';
